@@ -1,0 +1,21 @@
+# ref: https://help.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates
+version: 2
+
+updates:
+  - package-ecosystem: pip
+    open-pull-requests-limit: 10
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      time: "07:00"
+      timezone: "Africa/Nairobi"
+    labels:
+      - "dependencies"
+      - "pip"
+      - "python"
+      - "chore"
+    assignees:
+      - dependabot
+    reviewers:
+      - "BrianLusina"

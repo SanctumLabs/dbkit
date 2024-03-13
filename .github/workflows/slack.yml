@@ -1,0 +1,44 @@
+# Workflow only runs after the specified workflows have concluded running to completion. It then checks if they have
+# been successful or failed. Appropriate messages are then sent afterwards on each event type
+# Ref https://github.com/rtCamp/action-slack-notify
+name: Slack Notification
+
+on:
+  workflow_run:
+    workflows:
+      - "Lint"
+      - "Test"
+      - "Docker"
+      - "Release"
+    types:
+      - completed
+
+jobs:
+  onSuccess:
+    name: Success Notification
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    uses: SanctumLabs/ci-workflows/.github/workflows/slack_notification.yml@main
+    with:
+      slack_username: Ratholos
+      slack_channel: cicd
+      slack_icon: https://github.com/ratholos.png?size=48
+      slack_icon_emoji: ":large_green_circle:"
+      slack_title: ${{ github.repository }} - ${{ github.event.workflow_run.name }} Workflow Succeeded
+      slack_color: "good"
+    secrets:
+      slack_webhook: ${{ secrets.PIPELINES_SLACK_WEBHOOK }}
+
+  onFailure:
+    name: Failure Notification
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    uses: SanctumLabs/ci-workflows/.github/workflows/slack_notification.yml@main
+    with:
+      slack_username: Ratholos
+      slack_channel: cicd
+      slack_icon: https://github.com/ratholos.png?size=48
+      slack_message: ":cry:"
+      slack_title: ${{ github.repository }} - ${{ github.event.workflow_run.name }} Workflow Failed
+      slack_icon_emoji: ":red_circle:"
+      slack_color: "danger"
+    secrets:
+      slack_webhook: ${{ secrets.PIPELINES_SLACK_WEBHOOK }}
