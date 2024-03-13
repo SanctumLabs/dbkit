@@ -1,10 +1,11 @@
-# PyMaze
+# DB Kit
 
-[![Build](https://github.com/BrianLusina/pymaze/actions/workflows/build.yml/badge.svg)](https://github.com/BrianLusina/pymaze/actions/workflows/build.yml)
-[![Lint](https://github.com/BrianLusina/pymaze/actions/workflows/lint.yml/badge.svg)](https://github.com/BrianLusina/pymaze/actions/workflows/lint.yml)
-[![Tests](https://github.com/BrianLusina/pymaze/actions/workflows/tests.yaml/badge.svg)](https://github.com/BrianLusina/pymaze/actions/workflows/tests.yaml)
+[![Build](https://github.com/SanctumLabs/dbkit/actions/workflows/build.yml/badge.svg)](https://github.com/SanctumLabs/dbkit/actions/workflows/build.yml)
+[![Tests](https://github.com/SanctumLabs/dbkit/actions/workflows/tests.yaml/badge.svg)](https://github.com/SanctumLabs/dbkit/actions/workflows/tests.yaml)
+[![Lint](https://github.com/SanctumLabs/dbkit/actions/workflows/lint.yml/badge.svg)](https://github.com/SanctumLabs/dbkit/actions/workflows/lint.yml)
+[![Code Scanning](https://github.com/SanctumLabs/dbkit/actions/workflows/codeql.yaml/badge.svg)](https://github.com/SanctumLabs/dbkit/actions/workflows/codeql.yaml)
 
-This is a command line maze solver built in Python to solve various mazes.
+A wrapper for database packages which bakes in common database functionality.
 
 ## Pre-requisites
 

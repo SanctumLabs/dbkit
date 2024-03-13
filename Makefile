@@ -25,8 +25,11 @@ endif
 help: ## describe all commands
 	@grep -E '^[a-zA-Z_]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: default
+default: build
+
 install: ## Installs dependencies
-	pipenv install
+	poetry install
 
 run: ## Runs application
 	python -m pytree
@@ -65,6 +68,7 @@ clean: ## removes dist folder
 .PHONY: build
 build: ## builds project
 	poetry self add "poetry-dynamic-versioning[plugin]"
+	poetry dynamic-versioning enable
 	poetry build
 
 .PHONY: publish-gitlab

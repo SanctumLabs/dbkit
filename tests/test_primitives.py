@@ -1,5 +1,5 @@
 import unittest
-from src.pymaze.view.primitives import tag
+from dbkit.pymaze.view.primitives import tag
 
 
 class TagTestCases(unittest.TestCase):

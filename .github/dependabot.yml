@@ -7,7 +7,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "saturday"
+      day: "sunday"
       time: "07:00"
       timezone: "Africa/Nairobi"
     labels:
