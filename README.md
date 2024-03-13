@@ -31,16 +31,17 @@ A wrapper for database packages which bakes in common database functionality.
    ```
    > When using [GNU Make](https://www.gnu.org/s/make/manual/make.html), this is a wrapper around the top commend
 
-3. Install `pymaze` in editable mode:
-   ```shell
-   cd pymaze
-   pip install -e .
-   ```
+## Installation
 
-## Execution
-
-To execute `pymaze`, go ahead and run the below command:
-
-```shell
-python pymaze --help
+```bash
+poetry add dbkit
 ```
+
+## Features
+
+* `on_commit` hooks for a when a transaction is committed.
+* A DAO pattern for common methods such as `find`, `find_or_raise`, `all`...
+* A `BaseModel` with baked in mixins for `timestamps`, `soft deletions`, `auditable` & more...
+* Utility functions for working with models and schema.
+
+See [usage examples here](docs/usage.py)
