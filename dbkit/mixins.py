@@ -36,7 +36,7 @@ class TimestampColumnsMixin:
                                                            index=True)
 
 
-class SoftDeleteMixin:
+class SoftDeletedMixin:
     """
     A class var to indicate whether to use a timestamp (1970-01-01 00:00:01+00:00) for the 'not deleted' value of the
     'deleted_at' column for the model. Subclass models can override this and set to False to use a 'null' for 'not
