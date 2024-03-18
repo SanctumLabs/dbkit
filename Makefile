@@ -44,7 +44,7 @@ test-cover: ## Runs tests with coverage
 
 .PHONY: format-black
 format-black: ## Formats the files with black
-	poetry run black src/
+	poetry run black .
 
 .PHONY: lint-flake8
 lint-flake8: ## lints project using flake8

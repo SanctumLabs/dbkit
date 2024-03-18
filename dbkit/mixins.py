@@ -1,6 +1,7 @@
 """
 Contains mixins that can be included in classes to add more functionality
 """
+
 from typing import Optional
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
@@ -16,6 +17,7 @@ class Base(DeclarativeBase):
     """
     Base class for database models
     """
+
     pass
 
 
@@ -23,17 +25,23 @@ class UUIDPrimaryKeyMixin:
     """
     Primary Key Mixin that sets a UUID column as a primary key with the type set to a UUID V4
     """
-    uuid: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4, nullable=False)
+
+    uuid: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), primary_key=True, default=uuid4, nullable=False
+    )
 
 
 class TimestampColumnsMixin:
     """
     Timestamp Column mixin that adds timestamp columns to a table
     """
-    created_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), server_default=func.now(),
-                                                           index=True)
-    updated_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), onupdate=func.now(),
-                                                           index=True)
+
+    created_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), index=True
+    )
+    updated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), onupdate=func.now(), index=True
+    )
 
 
 class SoftDeletedMixin:
@@ -43,6 +51,7 @@ class SoftDeletedMixin:
     deleted' instead.
     Stores a timestamp of when a record was deleted
     """
+
     use_timestamp_as_not_deleted = True
 
     @classmethod
@@ -60,6 +69,7 @@ class AuditedMixin:
     """
     Mixin that contains audit information regarding database records, such as who updated a record
     """
+
     updated_by: Mapped[Optional[str]]
 
 
