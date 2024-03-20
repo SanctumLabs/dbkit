@@ -1,6 +1,6 @@
 from typing import Optional
 from dbkit.protocols import User
-from dbkit.models import AbstractBaseModel
+from dbkit.sql.models import AbstractBaseModel
 
 
 def set_updated_by(user: Optional[User], entity: AbstractBaseModel) -> None:

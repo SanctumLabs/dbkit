@@ -7,7 +7,7 @@ from typing import Generic, Any, Optional, Sequence, Type, TypeVar, cast
 from sqlalchemy import ColumnElement, Select, select
 
 from dbkit.exceptions import ModelNotFoundError
-from dbkit.models import AbstractBaseModel
+from dbkit.sql.models import AbstractBaseModel
 from dbkit.sql.session import Session
 
 T = TypeVar("T", bound=AbstractBaseModel)

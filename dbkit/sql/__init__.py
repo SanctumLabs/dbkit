@@ -15,5 +15,6 @@ __all__ = [
     "before_flush",
     "log_sql_statements",
     "on_commit",
-    "SessionLocal"
+    "SessionLocal",
+    "Session"
 ]
