@@ -15,7 +15,7 @@ from dbkit.sql.session import Session
 @pytest.fixture
 def database_session() -> Generator[Session, Any, None]:
     database_url = os.environ.get(
-        "DATABASE_URL", "postgresql://sanctumlabs:sanctumlabs@localhost:5437/dbkit-sql"
+        "DATABASE_URL", "postgresql://sanctumlabs:sanctumlabs@localhost:5432/dbkit-sql"
     )
 
     engine = create_engine(database_url)
