@@ -5,7 +5,7 @@ Session module contains implementation logic for a database session
 import functools
 from typing import Any, Callable, TypeVar, cast
 
-from sqlalchemy.orm import SessionTransaction, Session as BaseSession
+from sqlalchemy.orm import SessionTransaction, Session as BaseSession, sessionmaker
 
 FuncT = TypeVar("FuncT", bound=Callable[..., Any])
 
@@ -91,3 +91,6 @@ def transaction(func: FuncT) -> FuncT:
             return func(self, *args, **kwargs)
 
     return cast(FuncT, wrapper)
+
+
+SessionLocal = sessionmaker(class_=Session)

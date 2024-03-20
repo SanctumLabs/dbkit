@@ -8,7 +8,7 @@ from sqlalchemy import ColumnElement, Select, select
 
 from dbkit.exceptions import ModelNotFoundError
 from dbkit.models import AbstractBaseModel
-from dbkit.session import Session
+from dbkit.sql.session import Session
 
 T = TypeVar("T", bound=AbstractBaseModel)
 
