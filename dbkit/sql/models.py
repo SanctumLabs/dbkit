@@ -12,6 +12,7 @@ from dbkit.sql.mixins import (
 )
 
 
+# pylint: disable=too-many-ancestors
 class AbstractBaseModel(
     TimestampColumnsMixin, SoftDeletedMixin, AuditedMixin, TableNameMixin, Base
 ):
@@ -25,6 +26,7 @@ class AbstractBaseModel(
     pk: str = "uuid"
 
 
+# pylint: disable=too-many-ancestors
 class BaseModel(UUIDPrimaryKeyMixin, AbstractBaseModel):
     """
     Base model that subclasses the abstract base model & adds a UUID primary key mixin setting the primary key as the

@@ -1,3 +1,6 @@
+"""
+Database Kit SQL Utilities
+"""
 from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import inspect
@@ -61,4 +64,3 @@ def has_any_changed(entity: AbstractBaseModel, keys: List[str]) -> bool:
     intersected_keys = list(set(changed_keys) & set(keys))
 
     return len(intersected_keys) > 0
-

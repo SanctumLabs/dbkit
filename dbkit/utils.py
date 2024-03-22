@@ -1,3 +1,6 @@
+"""
+Database utilities
+"""
 from typing import Optional
 from dbkit.protocols import User
 from dbkit.sql.models import AbstractBaseModel

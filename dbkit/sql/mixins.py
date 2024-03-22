@@ -13,14 +13,14 @@ import inflection
 _NOT_DELETED: datetime = datetime(1970, 1, 1, 0, 0, 1, 0, timezone.utc)
 
 
+# pylint: disable=too-few-public-methods
 class Base(DeclarativeBase):
     """
     Base class for database models
     """
 
-    pass
 
-
+# pylint: disable=too-few-public-methods
 class UUIDPrimaryKeyMixin:
     """
     Primary Key Mixin that sets a UUID column as a primary key with the type set to a UUID V4
@@ -31,14 +31,17 @@ class UUIDPrimaryKeyMixin:
     )
 
 
+# pylint: disable=too-few-public-methods
 class TimestampColumnsMixin:
     """
     Timestamp Column mixin that adds timestamp columns to a table
     """
 
+    # pylint: disable=not-callable
     created_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), index=True
     )
+    # pylint: disable=not-callable
     updated_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), onupdate=func.now(), index=True
     )
@@ -78,7 +81,7 @@ class TableNameMixin:
     Mixin that creates the table names of a database
     """
 
-    @declared_attr
+    @declared_attr  # type: ignore[arg-type]
     def __tablename__(self) -> str:
         """Table names are snake case plural, for example shipping_records"""
-        return inflection.pluralize(inflection.underscore(self.__name__))
+        return inflection.pluralize(inflection.underscore(self.__name__))  # type: ignore[attr-defined]

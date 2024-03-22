@@ -82,6 +82,7 @@ def transaction(func: FuncT) -> FuncT:
     @functools.wraps(func)
     def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
         if not self.session or not isinstance(self.session, Session):
+            # pylint: disable=broad-exception-raised
             raise Exception(
                 "The @transaction decorator requires that an instance variable `session` be set to an instance of a "
                 "`Session`."
