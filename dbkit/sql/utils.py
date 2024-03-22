@@ -27,7 +27,7 @@ def get_changes(entity: AbstractBaseModel) -> Dict[str, Tuple[Any, Any]]:
 
     changes: Dict[str, Tuple[Any, Any]] = {}
 
-    for attr in state.attrs():
+    for attr in state.attrs:
         hist = state.get_history(attr.key, PassiveFlag.PASSIVE_OFF)
 
         if not hist.has_changes():
