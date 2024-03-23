@@ -1,4 +1,3 @@
-# Ref: https://github.com/wangchucheng/git-repo-sync
 name: Gitlab RepoSync
 
 on:
@@ -8,17 +7,9 @@ on:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
-    name: Gitlab Repo Sync
-    steps:
-
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Mirror to Gitlab
-        uses: wangchucheng/git-repo-sync@v0.1.0
-        with:
-          target-url: ${{ secrets.GITLAB_REPO_URL }}
-          target-username: ${{ secrets.GITLAB_USERNAME }}
-          target-token: ${{ secrets.GITLAB_ACCESS_TOKEN }}
+    name: Mirror to Gitlab
+    uses: SanctumLabs/ci-workflows/.github/workflows/repo_sync.yml@main
+    secrets:
+      url: ${{ secrets.GITLAB_REPO_URL }}
+      username: ${{ secrets.GITLAB_USERNAME }}
+      token: ${{ secrets.GITLAB_ACCESS_TOKEN }}
