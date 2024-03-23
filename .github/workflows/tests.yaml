@@ -13,11 +13,12 @@ permissions:
 
 jobs:
   unittests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     strategy:
       matrix:
         python-version: [ '3.12' ]
-    name: Unit Tests
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     services:
       postgres:
         image: postgres:16.2-alpine
@@ -27,8 +28,10 @@ jobs:
           POSTGRES_PASSWORD: sanctumlabs
         ports:
           - 5432:5432
-    uses: SanctumLabs/ci-workflows/.github/workflows/python-test.yml@main
-    with:
-      command: make test
-      python-version: ${{ matrix.python-version }}
-      packager: poetry
+    steps:
+      - name: Run Tests
+        uses: SanctumLabs/ci-workflows/.github/workflows/python-test.yml@main
+        with:
+          command: make test
+          python-version: ${{ matrix.python-version }}
+          packager: poetry
