@@ -8,8 +8,11 @@ on:
     workflows:
       - "Lint"
       - "Test"
-      - "Docker"
+      - "Build"
       - "Release"
+      - "Publish"
+      - "BitBucket RepoSync"
+      - "Gitlab RepoSync"
     types:
       - completed
 
