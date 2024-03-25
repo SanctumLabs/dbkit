@@ -1,11 +1,8 @@
 name: Tests
 
 on:
-  workflow_run:
-    workflows:
-      - "Lint"
-    types:
-      - completed
+  - push
+  - pull_request
 
 permissions:
   contents: read
@@ -17,9 +14,12 @@ jobs:
       matrix:
         python-version: [ '3.12' ]
     name: Unit Tests
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    uses: SanctumLabs/ci-workflows/.github/workflows/python-test.yml@main
+    uses: SanctumLabs/ci-workflows/.github/workflows/python-test-with-postgres.yml@main
     with:
       command: make test
       python-version: ${{ matrix.python-version }}
       packager: poetry
+      database-name: dbkit-sql
+      database-username: sanctumlabs
+      database-password: sanctumlabs
+      database-port: 5432

@@ -30,3 +30,14 @@ jobs:
       command: make lint-flake8
       python-version: ${{ matrix.python-version }}
       packager: poetry
+
+  lint-pylint:
+    strategy:
+      matrix:
+        python-version: [ '3.12' ]
+    name: Pylint
+    uses: SanctumLabs/ci-workflows/.github/workflows/python-lint.yml@main
+    with:
+      command: make lint-pylint
+      python-version: ${{ matrix.python-version }}
+      packager: poetry

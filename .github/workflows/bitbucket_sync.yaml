@@ -1,4 +1,3 @@
-# Ref: https://github.com/wangchucheng/git-repo-sync
 name: BitBucket RepoSync
 
 on:
@@ -8,17 +7,9 @@ on:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
-    name: Bitbucket Repo Sync
-    steps:
-
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Mirror to Bitbucket
-        uses: wangchucheng/git-repo-sync@v0.1.0
-        with:
-          target-url: ${{ secrets.BITBUCKET_REPO_URL }}
-          target-username: ${{ secrets.BITBUCKET_USERNAME }}
-          target-token: ${{ secrets.BITBUCKET_ACCESS_TOKEN }}
+    name: Mirror to Bitbucket
+    uses: SanctumLabs/ci-workflows/.github/workflows/repo_sync.yml@main
+    secrets:
+      url: ${{ secrets.BITBUCKET_REPO_URL }}
+      username: ${{ secrets.BITBUCKET_USERNAME }}
+      token: ${{ secrets.BITBUCKET_ACCESS_TOKEN }}

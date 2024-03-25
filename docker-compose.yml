@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  db:
+    container_name: dbkit-sql
+    image: postgres:16.2-alpine
+    environment:
+      - POSTGRES_DB=dbkit-sql
+      - POSTGRES_USER=sanctumlabs
+      - POSTGRES_PASSWORD=sanctumlabs
+    ports:
+      - "5432:5432"
