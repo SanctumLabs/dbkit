@@ -7,9 +7,9 @@ import pytest
 from sqlalchemy import create_engine
 
 from tests.sql import Business, Card, User
-from dbkit.sql import SessionLocal
-from dbkit.sql.models import Base
-from dbkit.sql.session import Session
+from sanctumlabs_dbkit.sql import SessionLocal
+from sanctumlabs_dbkit.sql.models import Base
+from sanctumlabs_dbkit.sql.session import Session
 
 
 @pytest.fixture

@@ -34,7 +34,7 @@ A wrapper for database packages which bakes in common database functionality.
 ## Installation
 
 ```bash
-poetry add dbkit
+poetry add sanctumlabs_dbkit
 ```
 
 ## Features

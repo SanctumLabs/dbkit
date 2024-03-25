@@ -1,10 +1,11 @@
 """
 Database kit sql Callbacks
 """
+
 from typing import List, cast
 
-from dbkit.sql.session import Session
-from dbkit.sql.types import CommitCallback
+from sanctumlabs_dbkit.sql.session import Session
+from sanctumlabs_dbkit.sql.types import CommitCallback
 
 
 def on_commit(current_session: Session, callback: CommitCallback) -> None:

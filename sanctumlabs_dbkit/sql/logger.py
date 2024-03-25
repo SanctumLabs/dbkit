@@ -1,6 +1,7 @@
 """
 Logger configuration
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

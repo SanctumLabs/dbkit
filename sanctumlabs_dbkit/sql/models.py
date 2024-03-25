@@ -2,7 +2,7 @@
 Contains base database models that can be subclassed to add functionality & attributes for database models in an app
 """
 
-from dbkit.sql.mixins import (
+from sanctumlabs_dbkit.sql.mixins import (
     AuditedMixin,
     Base,
     SoftDeletedMixin,

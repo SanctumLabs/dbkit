@@ -1,9 +1,9 @@
 import pytest
 
 from tests.sql import Card, User
-from dbkit.sql.repository import Repository
-from dbkit.exceptions import ModelNotFoundError
-from dbkit.sql.session import Session
+from sanctumlabs_dbkit.sql.repository import Repository
+from sanctumlabs_dbkit.exceptions import ModelNotFoundError
+from sanctumlabs_dbkit.sql.session import Session
 
 
 def test_query(database_session: Session) -> None:

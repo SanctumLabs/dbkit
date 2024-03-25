@@ -1,6 +1,7 @@
 """
 Protocols defining types
 """
+
 from typing import Protocol
 
 

@@ -1,12 +1,13 @@
 """
 Database Kit SQL Utilities
 """
+
 from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import inspect
 from sqlalchemy.orm import InstanceState, PassiveFlag
 
-from dbkit.sql.models import AbstractBaseModel
+from sanctumlabs_dbkit.sql.models import AbstractBaseModel
 
 
 def get_changes(entity: AbstractBaseModel) -> Dict[str, Tuple[Any, Any]]:

@@ -40,7 +40,7 @@ test: ## Runs tests
 
 .PHONY: test-cover
 test-cover: ## Runs tests with coverage
-	poetry run coverage run --source='./dbkit/' -m pytest -v --junitxml junit-report.xml tests/ && coverage xml && coverage report -m
+	poetry run coverage run --source='./sanctumlabs_dbkit/' -m pytest -v --junitxml junit-report.xml tests/ && coverage xml && coverage report -m
 
 .PHONY: format-black
 format-black: ## Formats the files with black
@@ -56,7 +56,7 @@ lint-mypy: ## runs type checker with mypy
 
 .PHONY: lint-pylint
 lint-pylint: ## Runs linting with pylint
-	poetry run pylint dbkit
+	poetry run pylint sanctumlabs_dbkit
 
 .PHONY: lint
 lint: format-black lint-flake8 lint-mypy lint-pylint

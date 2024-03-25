@@ -1,7 +1,7 @@
 from tests.sql import User
-from dbkit.sql.repository import Repository
-from dbkit.sql.session import Session
-from dbkit.sql.utils import get_changes, has_any_changed, has_changed
+from sanctumlabs_dbkit.sql.repository import Repository
+from sanctumlabs_dbkit.sql.session import Session
+from sanctumlabs_dbkit.sql.utils import get_changes, has_any_changed, has_changed
 
 
 def test_get_changes(database_session: Session) -> None:

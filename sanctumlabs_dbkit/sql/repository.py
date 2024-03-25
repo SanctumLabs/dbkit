@@ -6,9 +6,9 @@ from datetime import datetime, UTC
 from typing import Generic, Any, Optional, Sequence, Type, TypeVar, cast
 from sqlalchemy import ColumnElement, Select, select
 
-from dbkit.exceptions import ModelNotFoundError
-from dbkit.sql.models import AbstractBaseModel
-from dbkit.sql.session import Session
+from sanctumlabs_dbkit.exceptions import ModelNotFoundError
+from sanctumlabs_dbkit.sql.models import AbstractBaseModel
+from sanctumlabs_dbkit.sql.session import Session
 
 T = TypeVar("T", bound=AbstractBaseModel)
 

@@ -1,19 +1,20 @@
 """
 DBKit module entrypoint
 """
+
 from typing import List, Optional, cast
 
 from sqlalchemy_utils import force_instant_defaults
 from sqlalchemy import Sequence, event
 from sqlalchemy.orm import SessionTransaction, UOWTransaction
 
-from dbkit.sql.session import Session, SessionLocal
-from dbkit.sql.logger import log_sql_statements
-from dbkit.sql.types import CommitCallback
-from dbkit.sql.callbacks import on_commit
-from dbkit.sql.models import BaseModel
-from dbkit.protocols import User
-from dbkit.utils import set_updated_by
+from sanctumlabs_dbkit.sql.session import Session, SessionLocal
+from sanctumlabs_dbkit.sql.logger import log_sql_statements
+from sanctumlabs_dbkit.sql.types import CommitCallback
+from sanctumlabs_dbkit.sql.callbacks import on_commit
+from sanctumlabs_dbkit.sql.models import BaseModel
+from sanctumlabs_dbkit.protocols import User
+from sanctumlabs_dbkit.utils import set_updated_by
 
 # sets defaults for columns in the models on instantiation
 force_instant_defaults()

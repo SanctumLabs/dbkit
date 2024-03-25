@@ -4,13 +4,13 @@ from typing import Optional
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Mapped
 
-from dbkit.exceptions import ModelNotFoundError
-from dbkit.sql import SessionLocal, log_sql_statements, on_commit
-from dbkit.sql.repository import Repository
-from dbkit.sql.mixins import Base
-from dbkit.sql.models import BaseModel
-from dbkit.sql.session import Session
-from dbkit.sql.utils import get_changes, has_any_changed, has_changed
+from sanctumlabs_dbkit.exceptions import ModelNotFoundError
+from sanctumlabs_dbkit.sql import SessionLocal, log_sql_statements, on_commit
+from sanctumlabs_dbkit.sql.repository import Repository
+from sanctumlabs_dbkit.sql.mixins import Base
+from sanctumlabs_dbkit.sql.models import BaseModel
+from sanctumlabs_dbkit.sql.session import Session
+from sanctumlabs_dbkit.sql.utils import get_changes, has_any_changed, has_changed
 
 # Logging raw SQL statements
 
@@ -26,7 +26,9 @@ class Address(BaseModel):
 
 # Creating a database session
 
-database_url = "postgresql://sanctumlabs:sanctumlabs@localhost:5437/dbkit-sql"
+database_url = (
+    "postgresql://sanctumlabs:sanctumlabs@localhost:5437/sanctumlabs_dbkit-sql"
+)
 
 engine = create_engine(database_url)
 

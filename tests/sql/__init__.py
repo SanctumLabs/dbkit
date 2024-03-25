@@ -4,8 +4,8 @@ from typing import Optional
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from dbkit.sql import log_sql_statements
-from dbkit.sql.models import BaseModel
+from sanctumlabs_dbkit.sql import log_sql_statements
+from sanctumlabs_dbkit.sql.models import BaseModel
 
 log_sql_statements()
 

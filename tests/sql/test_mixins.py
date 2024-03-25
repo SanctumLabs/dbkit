@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 
 from tests.sql import Card, User
-from dbkit.sql.repository import Repository
-from dbkit.sql.session import Session
+from sanctumlabs_dbkit.sql.repository import Repository
+from sanctumlabs_dbkit.sql.session import Session
 
 
 def test_soft_deleted_mixin_subclasses_can_override_deleted_at(

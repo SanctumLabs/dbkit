@@ -6,9 +6,9 @@ import pytest
 from sqlalchemy import inspect
 
 from tests.sql import AdminUser, User
-from dbkit.sql import CommitCallback, on_commit
-from dbkit.sql.repository import Repository
-from dbkit.sql.session import Session, transaction
+from sanctumlabs_dbkit.sql import CommitCallback, on_commit
+from sanctumlabs_dbkit.sql.repository import Repository
+from sanctumlabs_dbkit.sql.session import Session, transaction
 
 
 def test_hooks_are_processed_when_a_transaction_is_committed(
