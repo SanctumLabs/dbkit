@@ -13,4 +13,4 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     uses: SanctumLabs/ci-workflows/.github/workflows/release-semantic.yml@main
     secrets:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.GITHUB_TOKEN }}
