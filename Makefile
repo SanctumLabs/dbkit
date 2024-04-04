@@ -46,6 +46,10 @@ test-cover: ## Runs tests with coverage
 format-black: ## Formats the files with black
 	poetry run black .
 
+.PHONY: format-ruff
+format-ruff: ## Runs formatting with ruff
+	poetry run ruff format sanctumlabs_dbkit
+
 .PHONY: lint-flake8
 lint-flake8: ## lints project using flake8
 	poetry run pre-commit run -a flake8
@@ -57,6 +61,10 @@ lint-mypy: ## runs type checker with mypy
 .PHONY: lint-pylint
 lint-pylint: ## Runs linting with pylint
 	poetry run pylint sanctumlabs_dbkit
+
+.PHONY: lint-ruff
+lint-ruff: ## Runs linting with ruff
+	poetry run ruff check sanctumlabs_dbkit
 
 .PHONY: lint
 lint: format-black lint-flake8 lint-mypy lint-pylint
