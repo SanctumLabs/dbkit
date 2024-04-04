@@ -6,8 +6,8 @@ include:
 
 stages:
   - lint
-  - build
   - test
+  - build
   - publish
 
 variables:
