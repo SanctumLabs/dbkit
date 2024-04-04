@@ -27,6 +27,7 @@ isort = "^5.13.2"
 autoflake = "^2.3.1"
 types-sqlalchemy-utils = "^1.0.1"
 psycopg2-binary = "^2.9.9"
+ruff = "^0.3.5"
 
 [tool.mypy]
 disallow_incomplete_defs = true
