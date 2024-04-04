@@ -44,4 +44,4 @@ poetry add sanctumlabs_dbkit
 * A `BaseModel` with baked in mixins for `timestamps`, `soft deletions`, `auditable` & more...
 * Utility functions for working with models and schema.
 
-See [usage examples here](docs/usage.py)
+See [usage examples here](./docs)
