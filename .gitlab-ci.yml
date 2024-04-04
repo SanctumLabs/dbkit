@@ -1,0 +1,91 @@
+image: python:3.11
+
+include:
+  - project: sanctumlabs/tools/ci-workflows
+    file: .gitlab/templates/slack-notification.yml
+
+stages:
+  - lint
+  - build
+  - test
+  - publish
+
+variables:
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUNBUFFERED: "1"
+  POETRY_VIRTUALENVS_IN_PROJECT: "true"
+
+before_script:
+  - pip install poetry==1.6.1
+  - poetry install --no-interaction --no-ansi
+
+lint-ruff:
+  stage: lint
+  script: make lint-ruff
+
+test:
+  image: python:${PYTHON_VERSION}
+  stage: test
+  needs:
+    - lint-ruff
+  services:
+    - postgres:15-alpine
+  variables:
+    DATABASE_URL: "postgresql://sanctumlabs:sanctumlabs@postgres:5432/dbkit-sql"
+    POSTGRES_DB: "dbkit-sql"
+    POSTGRES_USER: "sanctumlabs"
+    POSTGRES_PASSWORD: "sanctumlabs"
+    DB_HOST: "postgres"
+  script:
+    - poetry run coverage run --source='./sanctumlabs_dbkit/' -m pytest -v --junitxml junit-report.xml tests/
+    - poetry run coverage xml -o coverage.xml
+    - poetry run coverage xml -o coverage.xml
+    - poetry run coverage report -m
+  parallel:
+    matrix:
+      - PYTHON_VERSION: [ "3.10", "3.11", "3.12" ]
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    reports:
+      junit: ./junit-report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: ./coverage.xml
+
+build:
+  stage: build
+  needs:
+    - test
+  script: make build
+  artifacts:
+    expire_in: 5 days
+    when: always
+
+    paths:
+      - dist
+
+publish:
+  stage: publish
+  script: publish-gitlab
+  only:
+    - tags
+
+slack-success:
+  before_script: [ ]
+  needs:
+    - job: lint-ruff
+      optional: true
+    - job: test
+      optional: true
+    - job: publish
+      optional: true
+
+slack-failure:
+  before_script: [ ]
+  needs:
+    - job: lint-ruff
+      optional: true
+    - job: test
+      optional: true
+    - job: publish
+      optional: true
