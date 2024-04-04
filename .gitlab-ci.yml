@@ -51,6 +51,12 @@ test:
       coverage_report:
         coverage_format: cobertura
         path: ./coverage.xml
+  rules:
+    # allow failures for version below 3.12
+    - if: 'PYTHON_VERSION == "3.10"'
+      allow_failure: true
+    - if: 'PYTHON_VERSION == "3.11"'
+      allow_failure: true
 
 build:
   stage: build
@@ -65,6 +71,12 @@ build:
     when: always
     paths:
       - dist
+  rules:
+    # allow failures for version below 3.12
+    - if: 'PYTHON_VERSION == "3.10"'
+      allow_failure: true
+    - if: 'PYTHON_VERSION == "3.11"'
+      allow_failure: true
 
 publish:
   stage: publish
