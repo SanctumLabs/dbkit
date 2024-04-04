@@ -36,14 +36,14 @@ test:
     POSTGRES_USER: "sanctumlabs"
     POSTGRES_PASSWORD: "sanctumlabs"
     DB_HOST: "postgres"
+  parallel:
+    matrix:
+      - PYTHON_VERSION: [ "3.10", "3.11", "3.12" ]
   script:
     - poetry run coverage run --source='./sanctumlabs_dbkit/' -m pytest -v --junitxml junit-report.xml tests/
     - poetry run coverage xml -o coverage.xml
     - poetry run coverage xml -o coverage.xml
     - poetry run coverage report -m
-  parallel:
-    matrix:
-      - PYTHON_VERSION: [ "3.10", "3.11", "3.12" ]
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     reports:
@@ -55,12 +55,14 @@ test:
 build:
   stage: build
   needs:
-    - test
+    - job: test
+      parallel:
+        matrix:
+          - PYTHON_VERSION: [ "3.10", "3.11", "3.12" ]
   script: make build
   artifacts:
     expire_in: 5 days
     when: always
-
     paths:
       - dist
 
