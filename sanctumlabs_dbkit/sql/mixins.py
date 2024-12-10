@@ -5,7 +5,7 @@ Contains mixins that can be included in classes to add more functionality
 from typing import Optional
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
-from sqlalchemy import DateTime, func
+from sqlalchemy import DateTime, func, BIGINT, Identity
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 from sqlalchemy.dialects.postgresql import UUID as UUIDType
 import inflection
@@ -85,3 +85,19 @@ class TableNameMixin:
     def __tablename__(self) -> str:
         """Table names are snake case plural, for example shipping_records"""
         return inflection.pluralize(inflection.underscore(self.__name__))  # type: ignore[attr-defined]
+
+
+class BigIntIdentityMixin:
+    """
+    A mixin to provide an auto-incrementing bigint primary key column.
+
+    NOTE: usage of this mixin for primary key column purposes is discouraged and should only be used for special
+          cases (e.g. outbox spooler). The UUIDPrimaryKeyMixin is what should typically be used instead (via the
+          BaseModel class)
+    """
+    
+    id: Mapped[Optional[int]] = mapped_column(
+        Identity(start=1, cycle=False), primary_key=True, nullable=False, type_=BIGINT
+    )
+    
+    pk: str = "id"

@@ -3,7 +3,7 @@ Contains a generic base repository or DAO for access patterns to data for a give
 """
 
 from datetime import datetime, UTC
-from typing import Generic, Any, Optional, Sequence, Type, TypeVar, cast
+from typing import Generic, Any, Optional, Sequence, Type, TypeVar, cast, TypeGuard
 from sqlalchemy import ColumnElement, Select, select
 
 from sanctumlabs_dbkit.exceptions import ModelNotFoundError
@@ -28,11 +28,29 @@ class Repository(Generic[T]):
         self.model = model
         self.session = session
 
+    @staticmethod
+    def _supports_soft_deletion(model: Type[T]) -> TypeGuard[Type[AbstractBaseModel]]:
+        """
+        Indicates if the provided model supports soft deletion (has a 'deleted_at' column). This function
+        takes in an argument due to mypy typeguarding requirements, and is thus static.
+        """
+        return issubclass(model, AbstractBaseModel)
+    
+    def create(self, refresh: bool = False, **kwargs: Any) -> T:
+        model_instance = self.model(**kwargs)
+        self.session.add(model_instance)
+        
+        if refresh:
+            self.session.flush()
+            self.session.refresh(model_instance)
+        
+        return cast(T, model_instance)
+    
     def query(self, include_deleted: bool = False) -> Select:
         """Returns a select query with the model including deleted records if the include_deleted is set to True"""
         selectable = select(self.model)
 
-        if not include_deleted:
+        if not include_deleted and self._supports_soft_deletion(self.model):
             selectable = selectable.where(
                 self.model.deleted_at == self.model.not_deleted_value()
             )
@@ -67,7 +85,11 @@ class Repository(Generic[T]):
     def delete(self, pk: Any) -> None:
         """Deletes a given record with the given primary key"""
         entity = self.find(pk)
-
+        
+        # Cast here as mypy type narrowing doesn't infer the type of entity
+        # correctly
+        entity = cast(AbstractBaseModel, self.find(pk))
+        
         if entity:
             entity.deleted_at = datetime.now(UTC)
 

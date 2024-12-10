@@ -21,10 +21,10 @@ def get_changes(entity: AbstractBaseModel) -> Dict[str, Tuple[Any, Any]]:
     Example:
       user = get_user_by_id(420)
       >>> '<User id=402 email="business_email@gmail.com">'
-      get_model_changes(user)
+      get_changes(user)
       >>> {}
       user.email = 'new_email@who-dis.biz'
-      get_model_changes(user)
+      get_changes(user)
       >>> {'email': ['business_email@gmail.com', 'new_email@who-dis.biz']}
     """
     state: InstanceState = inspect(entity)

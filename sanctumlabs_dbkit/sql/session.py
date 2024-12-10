@@ -28,7 +28,7 @@ class Session(BaseSession):
         Example:
 
         ```python
-        from sanctumlabs_dbkit import SessionLocal
+        from sanctumlabs_dbkit.sql import SessionLocal
 
         session = SessionLocal()
 
@@ -59,8 +59,8 @@ def transaction(func: FuncT) -> FuncT:
     Example:
 
     ```python
-    from sanctumlabs_dbkit import SessionLocal
-    from sanctumlabs_dbkit.session import transaction
+    from sanctumlabs_dbkit.sql import SessionLocal
+    from sanctumlabs_dbkit.sql.session import transaction
 
     class UserService():
         def __init__(session: Session):
