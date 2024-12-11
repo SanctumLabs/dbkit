@@ -9,4 +9,3 @@ class ModelNotFoundError(Exception):
 
 class UnsupportedModelOperationError(Exception):
     """Error indicating an operation on a model is unsupported"""
-    pass

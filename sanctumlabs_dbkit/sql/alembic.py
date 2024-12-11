@@ -1,8 +1,13 @@
+"""
+Alembic utilities
+"""
+
 from typing import Any, Literal, Union
 
 from sanctumlabs_dbkit.sql.types import PydanticModel, PydanticModelList
 
 
+# pylint: disable=unused-argument
 def render_item(
     type_: str, obj: Any, autogen_context: Any
 ) -> Union[str, Literal[False]]:
@@ -28,9 +33,7 @@ def render_item(
     See https://gist.github.com/imankulov/4051b7805ad737ace7d8de3d3f934d6b
     """
 
-    if type_ == "type" and (
-        isinstance(obj, PydanticModelList) or isinstance(obj, PydanticModel)
-    ):
+    if type_ == "type" and isinstance(obj, (PydanticModelList, PydanticModel)):
         return "sa.JSON()"
 
     return False

@@ -1,6 +1,7 @@
 """
 Contains base database models that can be subclassed to add functionality & attributes for database models in an app
 """
+
 from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
@@ -15,7 +16,7 @@ from sanctumlabs_dbkit.sql.mixins import (
     TableNameMixin,
     TimestampColumnsMixin,
     UUIDPrimaryKeyMixin,
-    BaseIdentityMixin
+    BigIntIdentityMixin,
 )
 
 
@@ -42,7 +43,9 @@ class BaseModel(UUIDPrimaryKeyMixin, AbstractBaseModel):
 
     __abstract__ = True
 
-class BaseOutboxEvent(Base, BaseIdentityMixin, TableNameMixin):
+
+# pylint: disable=too-few-public-methods
+class BaseOutboxEvent(Base, BigIntIdentityMixin, TableNameMixin):
     """
     Base model for outbox events. Projects can choose to add additional table args (e.g. custom index) if
     needed:
@@ -53,11 +56,11 @@ class BaseOutboxEvent(Base, BaseIdentityMixin, TableNameMixin):
         ),
     )
     """
-    
+
     __abstract__ = True
-    
+
     uuid: Mapped[UUID] = mapped_column(unique=True, default=uuid4)
-    
+
     created: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc)
     )
@@ -69,9 +72,12 @@ class BaseOutboxEvent(Base, BaseIdentityMixin, TableNameMixin):
     sent_time: Mapped[Optional[datetime]]
     error_message: Mapped[Optional[str]]
 
-    # mimic AbstractBaseModel to play nicely in the base DAO class
+    # pylint: disable=no-self-argument
     @declared_attr
     def created_at(cls) -> Mapped[datetime]:  # noqa: N805
+        """created_at field that is a synonym to the created field declared in the class,
+        This is used to mimic AbstractBaseModel to play nicely in the base Repository class
+        """
         return synonym("created")
 
 

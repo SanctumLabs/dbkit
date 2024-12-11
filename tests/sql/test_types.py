@@ -6,7 +6,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import JSON, text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from sanctumlabs_dbkit.sql.repository import DAO
+from sanctumlabs_dbkit.sql.repository import Repository
 from sanctumlabs_dbkit.sql.models import BaseModel
 from sanctumlabs_dbkit.sql.session import Session
 from sanctumlabs_dbkit.sql.types import (
@@ -53,9 +53,9 @@ def test_sqlalchemy_uses_pydantic_json_serializer_to_serialize_json(
 
         database_session.add(person)
 
-    people_dao = DAO(Person, database_session)
+    people_repository = Repository(Person, database_session)
 
-    people = people_dao.all()
+    people = people_repository.all()
 
     assert len(people) == 1
 

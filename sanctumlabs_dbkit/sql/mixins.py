@@ -95,9 +95,9 @@ class BigIntIdentityMixin:
           cases (e.g. outbox spooler). The UUIDPrimaryKeyMixin is what should typically be used instead (via the
           BaseModel class)
     """
-    
+
     id: Mapped[Optional[int]] = mapped_column(
         Identity(start=1, cycle=False), primary_key=True, nullable=False, type_=BIGINT
     )
-    
+
     pk: str = "id"

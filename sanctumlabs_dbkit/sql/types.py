@@ -1,6 +1,7 @@
 """
 Database Kit Types
 """
+
 from __future__ import annotations
 
 from typing import (
@@ -16,7 +17,6 @@ from typing import (
     Union,
     cast,
 )
-from sanctumlabs_dbkit.sql.session import Session
 
 import sqlalchemy as sa
 from pydantic import BaseModel
@@ -25,6 +25,8 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.mutable import Mutable, MutableList
 from sqlalchemy.sql.type_api import TypeEngine
 from wrapt import ObjectProxy
+
+from sanctumlabs_dbkit.sql.session import Session
 
 CommitCallback = Callable[[Session], None]
 
@@ -53,6 +55,7 @@ class SerializationOptions(BaseModel):
     exclude_defaults: bool = False
 
 
+# pylint: disable=abstract-method,too-many-ancestors
 class ColumnUsesPydanticModelsMixin(sa.types.TypeDecorator, TypeEngine[_T]):
     """
     ColumnUsesPydanticModelsMixin is a mixin class for serializing and deserializing pydantic models to/from
@@ -75,8 +78,7 @@ class ColumnUsesPydanticModelsMixin(sa.types.TypeDecorator, TypeEngine[_T]):
         # Use JSONB for PostgreSQL and JSON for other databases.
         if dialect.name == "postgresql":
             return dialect.type_descriptor(JSONB(none_as_null=True))  # type: ignore
-        else:
-            return dialect.type_descriptor(sa.JSON(none_as_null=True))
+        return dialect.type_descriptor(sa.JSON(none_as_null=True))
 
     def _model_to_dict(self, value: _T) -> Dict[str, Any]:
         return value.model_dump(
@@ -84,6 +86,7 @@ class ColumnUsesPydanticModelsMixin(sa.types.TypeDecorator, TypeEngine[_T]):
         )
 
 
+# pylint: disable=abstract-method, too-many-ancestors
 class PydanticModel(ColumnUsesPydanticModelsMixin):
     """
     A custom SQLAlchemy column type for declaring a field as a pydantic model.
@@ -112,7 +115,8 @@ class PydanticModel(ColumnUsesPydanticModelsMixin):
         return f"PydanticModel{self.model.__name__}"
 
 
-class PydanticModelProxy(ObjectProxy):
+# pylint: disable=abstract-method,too-few-public-methods
+class PydanticModelProxy(ObjectProxy):  # type: ignore[misc]
     """
     A proxy class wrapping a pydantic model.
 
@@ -141,7 +145,9 @@ class MutablePydanticModel(Mutable):
 
     See https://docs.sqlalchemy.org/en/14/orm/extensions/mutable.html for further docs on mutation tracking.
 
-    `cart_summary: Mapped[CartSummary] = mapped_column(MutablePydanticModel.as_mutable(CartSummary), default=lambda: CartSummary())`
+    `cart_summary: Mapped[CartSummary] = mapped_column(
+        MutablePydanticModel.as_mutable(CartSummary), default=lambda: CartSummary()
+    )`
     """
 
     def __init__(self, model_instance: BaseModel):
@@ -166,8 +172,7 @@ class MutablePydanticModel(Mutable):
                 return cls(value)
 
             return Mutable.coerce(key, value)
-        else:
-            return value
+        return value
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name == "proxied_model_instance":
@@ -177,9 +182,9 @@ class MutablePydanticModel(Mutable):
 
     def __getattr__(self, name: str) -> Any:
         if name == "proxied_model_instance":
+            # pylint: disable=no-member
             return super().__getattr__(name)  # type: ignore
-        else:
-            return getattr(self.proxied_model_instance, name)
+        return getattr(self.proxied_model_instance, name)
 
 
 class PydanticModelList(ColumnUsesPydanticModelsMixin):
@@ -194,16 +199,14 @@ class PydanticModelList(ColumnUsesPydanticModelsMixin):
     ) -> Optional[List[Dict[str, Any]]]:
         if value:
             return [self._model_to_dict(model_instance) for model_instance in value]
-        else:
-            return None
+        return None
 
     def process_result_value(
         self, value: Optional[Any], dialect: Dialect
     ) -> Optional[List[BaseModel]]:
         if value:
             return [self.model.model_validate(model_data) for model_data in value]
-        else:
-            return None
+        return None
 
 
 class MutablePydanticModelList(MutableList):
@@ -266,10 +269,10 @@ def _create_proxied_pydantic_model(
 ) -> PydanticModelProxy:
     if isinstance(model_instance, PydanticModelProxy):
         return model_instance
-    elif isinstance(model_instance, BaseModel):
+    if isinstance(model_instance, BaseModel):
         return PydanticModelProxy(model_instance, mutable)
-    else:
-        raise Exception("The model instance must be a pydantic model")
+    # pylint: disable=broad-exception-raised
+    raise Exception("The model instance must be a pydantic model")
 
 
 def normalise_mutable_pydantic_model(v: Any) -> Any:
@@ -293,7 +296,8 @@ def normalise_mutable_pydantic_model(v: Any) -> Any:
     ```
 
     In this example, if we were to store the `BusinessSocialAccounts` in a database column, it would be wrapped
-    within mutable and proxy objects.  If we were to later try and construct a `BusinessEntity` using `model_validate()`, it would complain that we're
+    within mutable and proxy objects.  If we were to later try and construct a `BusinessEntity` using
+    `model_validate()`, it would complain that we're
     trying to set a field expecting type `BusinessSocialAccounts` to something which is a `MutablePydanticModel`.
     We therefore use the hook to normalise the proxy model to the actual pydantic model.
     """
