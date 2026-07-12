@@ -1,3 +1,5 @@
+"""Session package exposing sync and async session implementations."""
+
 from sanctumlabs_dbkit.sql.session.async_session import (
     AsyncSession,
     AsyncSessionLocal,
