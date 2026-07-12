@@ -48,12 +48,12 @@ class AsyncSession(BaseAsyncSession):
         create_user({"first_name": "Bob"})
         """
 
-        @functools.wraps(func)
+        `@functools.wraps`(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             async with self.begin():
-                return func(*args, **kwargs)
+                return await func(*args, **kwargs)
 
-        return wrapper
+        return cast(FuncT, wrapper)
 
 
 async def async_transaction(func: FuncT) -> FuncT:
