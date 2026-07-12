@@ -34,7 +34,7 @@ class AsyncSession(BaseAsyncSession):
         Example:
 
         ```python
-        from sanctumlabs_dbkit.sql import AsyncSessionLocal
+        from sanctumlabs_dbkit.sql.session import AsyncSessionLocal
 
         session = SessionLocal()
 
@@ -65,14 +65,14 @@ async def async_transaction(func: FuncT) -> FuncT:
     Example:
 
     ```python
-    from sanctumlabs_dbkit.sql import AsyncSessionLocal
-    from sanctumlabs_dbkit.sql.async_session import transaction
+    from sanctumlabs_dbkit.sql.session import AsyncSessionLocal
+    from sanctumlabs_dbkit.sql.sesison import async_transaction
 
     class UserService():
         def __init__(session: AsyncSession):
             self.session = session
 
-        @transaction
+        @async_transaction
         def create(payload) -> User:
             user = User(**payload)
             self.session.add(user)
