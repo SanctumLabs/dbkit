@@ -3,7 +3,7 @@ Async Session module contains implementation logic for a database session
 """
 
 import functools
-from typing import Any
+from typing import Any, cast
 
 from sqlalchemy.ext.asyncio import (
     AsyncSession as BaseAsyncSession,
@@ -48,7 +48,7 @@ class AsyncSession(BaseAsyncSession):
         create_user({"first_name": "Bob"})
         """
 
-        `@functools.wraps`(func)
+        @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             async with self.begin():
                 return await func(*args, **kwargs)
@@ -63,6 +63,22 @@ def async_transaction(func: FuncT) -> FuncT:
     If we are already within a transaction, a nested transaction will be started.
 
     Example:
+    AsyncSessionLocal = async_sessionmaker(class_=AsyncSession)
+    """
+
+    @functools.wraps(func)
+    async def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
+        if not self.session or not isinstance(self.session, AsyncSession):
+            # pylint: disable=broad-exception-raised
+            raise Exception(
+                "The @transaction decorator requires that an instance variable `session` be set to an instance of a "
+                "`Session`."
+            )
+
+        async with self.session.begin():
+            return func(self, *args, **kwargs)
+
+    return cast(FuncT, wrapper)
 
 
 AsyncSessionLocal = async_sessionmaker(class_=AsyncSession)
