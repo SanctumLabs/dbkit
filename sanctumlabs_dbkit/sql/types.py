@@ -27,8 +27,10 @@ from sqlalchemy.sql.type_api import TypeEngine
 from wrapt import ObjectProxy
 
 from sanctumlabs_dbkit.sql.session import Session
+from sanctumlabs_dbkit.sql.session.async_session import AsyncSession
 
 CommitCallback = Callable[[Session], None]
+CommitCallbackAsync = Callable[[AsyncSession], None]
 
 _T = TypeVar("_T", bound=BaseModel)
 

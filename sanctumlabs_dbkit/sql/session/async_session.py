@@ -1,23 +1,29 @@
 """
-Session module contains implementation logic for a database session
+Async Session module contains implementation logic for a database session
 """
 
 import functools
-from typing import Any, Callable, TypeVar, cast
+from typing import Any
 
-from sqlalchemy.orm import SessionTransaction, Session as BaseSession, sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncSession as BaseAsyncSession,
+    AsyncSessionTransaction,
+    async_sessionmaker,
+)
 
-FuncT = TypeVar("FuncT", bound=Callable[..., Any])
+from sanctumlabs_dbkit.sql.session.types import FuncT
 
 
-class Session(BaseSession):
+class AsyncSession(BaseAsyncSession):
     """
     Session that subclasses SQLAlchemy Base Session class adding more functionality around a database session
     """
 
-    def begin(self, nested: bool = False) -> SessionTransaction:
-        """Begins a session transaction"""
-        return super().begin(nested=nested or self.in_transaction())
+    def begin(self, nested: bool = False) -> AsyncSessionTransaction:
+        """Begins an async session transaction"""
+        if nested:
+            return super().begin_nested()
+        return super().begin()
 
     def transaction(self, func: FuncT) -> FuncT:
         """
@@ -28,7 +34,7 @@ class Session(BaseSession):
         Example:
 
         ```python
-        from sanctumlabs_dbkit.sql import SessionLocal
+        from sanctumlabs_dbkit.sql import AsyncSessionLocal
 
         session = SessionLocal()
 
@@ -43,14 +49,14 @@ class Session(BaseSession):
         """
 
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            with self.begin():
+        async def wrapper(*args: Any, **kwargs: Any) -> Any:
+            async with self.begin():
                 return func(*args, **kwargs)
 
-        return cast(FuncT, wrapper)
+        return wrapper
 
 
-def transaction(func: FuncT) -> FuncT:
+async def async_transaction(func: FuncT) -> FuncT:
     """
     A decorator to wrap an instance method within a transaction.
 
@@ -59,11 +65,11 @@ def transaction(func: FuncT) -> FuncT:
     Example:
 
     ```python
-    from sanctumlabs_dbkit.sql import SessionLocal
-    from sanctumlabs_dbkit.sql.session import transaction
+    from sanctumlabs_dbkit.sql import AsyncSessionLocal
+    from sanctumlabs_dbkit.sql.async_session import transaction
 
     class UserService():
-        def __init__(session: Session):
+        def __init__(session: AsyncSession):
             self.session = session
 
         @transaction
@@ -73,25 +79,25 @@ def transaction(func: FuncT) -> FuncT:
 
             return user
 
-    session = SessionLocal()
+    session = AsyncSessionLocal()
 
     user_service = UserService(session)
     user_service.create({"first_name": "Bob"})
     """
 
     @functools.wraps(func)
-    def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
-        if not self.session or not isinstance(self.session, Session):
+    async def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
+        if not self.session or not isinstance(self.session, AsyncSession):
             # pylint: disable=broad-exception-raised
             raise Exception(
                 "The @transaction decorator requires that an instance variable `session` be set to an instance of a "
                 "`Session`."
             )
 
-        with self.session.begin():
+        async with self.session.begin():
             return func(self, *args, **kwargs)
 
-    return cast(FuncT, wrapper)
+    return wrapper
 
 
-SessionLocal = sessionmaker(class_=Session)
+AsyncSessionLocal = async_sessionmaker(class_=AsyncSession)

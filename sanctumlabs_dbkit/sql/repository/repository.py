@@ -9,21 +9,17 @@ from typing import (
     Optional,
     Sequence,
     Type,
-    TypeVar,
     cast,
     TypeGuard,
-    Union,
 )
+
 from sqlalchemy import ColumnElement, Select, select
 
 from sanctumlabs_dbkit.exceptions import ModelNotFoundError
-from sanctumlabs_dbkit.sql.models import AbstractBaseModel, BaseOutboxEvent
-from sanctumlabs_dbkit.sql.session import Session
 from sanctumlabs_dbkit.exceptions import UnsupportedModelOperationError
-
-RepositoryBaseModel = Union[AbstractBaseModel, BaseOutboxEvent]
-
-T = TypeVar("T", bound=RepositoryBaseModel)
+from sanctumlabs_dbkit.sql.models import AbstractBaseModel
+from sanctumlabs_dbkit.sql.repository.types import T
+from sanctumlabs_dbkit.sql.session import Session
 
 
 class Repository(Generic[T]):
