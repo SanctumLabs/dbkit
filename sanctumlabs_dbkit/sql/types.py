@@ -4,6 +4,7 @@ Database Kit Types
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import (
     Any,
     Callable,
@@ -83,9 +84,30 @@ class ColumnUsesPydanticModelsMixin(sa.types.TypeDecorator, TypeEngine[_T]):
         return dialect.type_descriptor(sa.JSON(none_as_null=True))
 
     def _model_to_dict(self, value: _T) -> Dict[str, Any]:
-        return value.model_dump(
-            exclude_defaults=self.serialization_options.exclude_defaults
+        model_data = value.model_dump(
+            exclude_defaults=self.serialization_options.exclude_defaults,
         )
+
+        return cast(Dict[str, Any], _normalise_json_compatible_value(model_data))
+
+
+def _normalise_json_compatible_value(value: Any) -> Any:
+    if isinstance(value, Decimal):
+        if value == value.to_integral_value():
+            return int(value)
+
+        return float(value)
+
+    if isinstance(value, dict):
+        return {k: _normalise_json_compatible_value(v) for k, v in value.items()}
+
+    if isinstance(value, list):
+        return [_normalise_json_compatible_value(v) for v in value]
+
+    if isinstance(value, tuple):
+        return tuple(_normalise_json_compatible_value(v) for v in value)
+
+    return value
 
 
 # pylint: disable=abstract-method, too-many-ancestors

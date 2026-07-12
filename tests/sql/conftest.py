@@ -1,9 +1,12 @@
 import os
+import json
 from datetime import datetime, UTC
+from decimal import Decimal
 from typing import Any, Generator
 from uuid import UUID
 
 import pytest
+from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import create_engine
 
 from tests.sql import Business, Card, User
@@ -12,13 +15,29 @@ from sanctumlabs_dbkit.sql.models import Base
 from sanctumlabs_dbkit.sql.session import Session
 
 
+def pydantic_json_serializer(value: Any) -> str:
+    def default(obj: Any) -> Any:
+        if isinstance(obj, PydanticBaseModel):
+            return obj.model_dump(mode="json")
+
+        if isinstance(obj, Decimal):
+            if obj == obj.to_integral_value():
+                return int(obj)
+
+            return float(obj)
+
+        raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+    return json.dumps(value, default=default)
+
+
 @pytest.fixture
 def database_session() -> Generator[Session, Any, None]:
     database_url = os.environ.get(
         "DATABASE_URL", "postgresql://sanctumlabs:sanctumlabs@localhost:5432/dbkit-sql"
     )
 
-    engine = create_engine(database_url)
+    engine = create_engine(database_url, json_serializer=pydantic_json_serializer)
 
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
