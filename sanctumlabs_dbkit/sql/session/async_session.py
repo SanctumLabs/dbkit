@@ -21,7 +21,7 @@ class AsyncSession(BaseAsyncSession):
 
     def begin(self, nested: bool = False) -> AsyncSessionTransaction:
         """Begins an async session transaction"""
-        if nested:
+        if nested or self.in_transaction():
             return super().begin_nested()
         return super().begin()
 
