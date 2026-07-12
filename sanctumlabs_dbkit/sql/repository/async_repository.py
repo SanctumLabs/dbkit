@@ -45,7 +45,7 @@ class AsyncRepository(Generic[T]):
         """
         return issubclass(model, AbstractBaseModel)
 
-    def create(self, refresh: bool = False, **kwargs: Any) -> T:
+    async def create(self, refresh: bool = False, **kwargs: Any) -> T:
         """Creates a new entity
 
         Args:
@@ -58,10 +58,10 @@ class AsyncRepository(Generic[T]):
         self.session.add(model_instance)
 
         if refresh:
-            self.session.flush()
-            self.session.refresh(model_instance)
+            await self.session.flush()
+            await self.session.refresh(model_instance)
 
-        return cast(T, model_instance)
+        return model_instance
 
     def query(self, include_deleted: bool = False) -> Select:
         """Returns a select query with the model including deleted records if the include_deleted is set to True"""
