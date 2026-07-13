@@ -26,7 +26,9 @@ def pydantic_json_serializer(value: Any) -> str:
 
             return float(obj)
 
-        raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+        raise TypeError(
+            f"Object of type {obj.__class__.__name__} is not JSON serializable"
+        )
 
     return json.dumps(value, default=default)
 
