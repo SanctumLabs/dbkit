@@ -80,7 +80,7 @@ class ColumnUsesPydanticModelsMixin(sa.types.TypeDecorator, TypeEngine[_T]):
     def load_dialect_impl(self, dialect: Dialect) -> TypeEngine[Any]:
         # Use JSONB for PostgreSQL and JSON for other databases.
         if dialect.name == "postgresql":
-            return dialect.type_descriptor(JSONB(none_as_null=True))  # type: ignore
+            return dialect.type_descriptor(JSONB(none_as_null=True))
         return dialect.type_descriptor(sa.JSON(none_as_null=True))
 
     def _model_to_dict(self, value: _T) -> Dict[str, Any]:

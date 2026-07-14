@@ -62,7 +62,7 @@ class Repository(Generic[T]):
             self.session.flush()
             self.session.refresh(model_instance)
 
-        return cast(T, model_instance)
+        return model_instance
 
     def query(self, include_deleted: bool = False) -> Select:
         """Returns a select query with the model including deleted records if the include_deleted is set to True"""
@@ -162,6 +162,14 @@ class BaseRepository(Generic[T], metaclass=ABCMeta):
 
         return selectable
 
+    def find(self, pk: Any, include_deleted: bool = False) -> Optional[T]:
+        """Retrieve a given model given its primary key"""
+        pk_column = cast(ColumnElement, getattr(self.model, self.model.pk))
+
+        statement = self.query(include_deleted).where(pk_column == pk).limit(1)
+
+        return self.session.scalars(statement).first()
+
 
 class WriteRepository(BaseRepository, Generic[T]):
     """
@@ -227,14 +235,6 @@ class ReadRepository(BaseRepository, Generic[T]):
         super().__init__(model, session)
         self.model = model
         self.session = session
-
-    def find(self, pk: Any, include_deleted: bool = False) -> Optional[T]:
-        """Retrieve a given model given its primary key"""
-        pk_column = cast(ColumnElement, getattr(self.model, self.model.pk))
-
-        statement = self.query(include_deleted).where(pk_column == pk).limit(1)
-
-        return self.session.scalars(statement).first()
 
     def find_or_raise(self, pk: Any, include_deleted: bool = False) -> T:
         """Finds the given entity or raises an exception if the entity can not be found"""

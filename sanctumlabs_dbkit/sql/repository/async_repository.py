@@ -164,15 +164,24 @@ class AsyncBaseRepository(Generic[T]):
 
         return selectable
 
+    async def find(self, pk: Any, include_deleted: bool = False) -> Optional[T]:
+        """Retrieve a given model given its primary key"""
+        pk_column = cast(ColumnElement, getattr(self.model, self.model.pk))
+
+        statement = self.query(include_deleted).where(pk_column == pk).limit(1)
+        scalars = await self.session.scalars(statement)
+
+        return scalars.first()
+
 
 class AsyncWriteRepository(AsyncBaseRepository, Generic[T]):
     """
     A base class for implementing an async write Repository or DAO for performing write operations.
 
     ```python
-    job_dao = AsyncWriteRepository(model=Job, session=async_session)
+    job_repo = AsyncWriteRepository(model=Job, session=async_session)
 
-    job = job_dao.find("123")
+    job = job_repo.create(name="123")
     """
 
     def __init__(self, model: Type[T], session: AsyncSession) -> None:
@@ -229,15 +238,6 @@ class AsyncReadRepository(AsyncBaseRepository, Generic[T]):
         super().__init__(model, session)
         self.model = model
         self.session = session
-
-    async def find(self, pk: Any, include_deleted: bool = False) -> Optional[T]:
-        """Retrieve a given model given its primary key"""
-        pk_column = cast(ColumnElement, getattr(self.model, self.model.pk))
-
-        statement = self.query(include_deleted).where(pk_column == pk).limit(1)
-        scalars = await self.session.scalars(statement)
-
-        return scalars.first()
 
     async def find_or_raise(self, pk: Any, include_deleted: bool = False) -> T:
         """Finds the given entity or raises an exception if the entity can not be found"""
