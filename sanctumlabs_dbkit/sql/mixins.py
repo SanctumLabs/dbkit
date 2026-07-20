@@ -81,10 +81,10 @@ class TableNameMixin:
     Mixin that creates the table names of a database
     """
 
-    @declared_attr  # type: ignore[arg-type]
+    @declared_attr.directive  # type: ignore[arg-type]
     def __tablename__(self) -> str:
         """Table names are snake case plural, for example shipping_records"""
-        return inflection.pluralize(inflection.underscore(self.__name__))  # type: ignore[attr-defined]
+        return inflection.pluralize(inflection.underscore(self.__name__))  # type: ignore[attr-defined]  # ty:ignore[unresolved-attribute]
 
 
 class BigIntIdentityMixin:

@@ -4,6 +4,7 @@ Database Kit Types
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import (
     Any,
     Callable,
@@ -27,8 +28,10 @@ from sqlalchemy.sql.type_api import TypeEngine
 from wrapt import ObjectProxy
 
 from sanctumlabs_dbkit.sql.session import Session
+from sanctumlabs_dbkit.sql.session.async_session import AsyncSession
 
 CommitCallback = Callable[[Session], None]
+CommitCallbackAsync = Callable[[AsyncSession], None]
 
 _T = TypeVar("_T", bound=BaseModel)
 
@@ -77,13 +80,34 @@ class ColumnUsesPydanticModelsMixin(sa.types.TypeDecorator, TypeEngine[_T]):
     def load_dialect_impl(self, dialect: Dialect) -> TypeEngine[Any]:
         # Use JSONB for PostgreSQL and JSON for other databases.
         if dialect.name == "postgresql":
-            return dialect.type_descriptor(JSONB(none_as_null=True))  # type: ignore
+            return dialect.type_descriptor(JSONB(none_as_null=True))
         return dialect.type_descriptor(sa.JSON(none_as_null=True))
 
     def _model_to_dict(self, value: _T) -> Dict[str, Any]:
-        return value.model_dump(
-            exclude_defaults=self.serialization_options.exclude_defaults
+        model_data = value.model_dump(
+            exclude_defaults=self.serialization_options.exclude_defaults,
         )
+
+        return cast(Dict[str, Any], _normalise_json_compatible_value(model_data))
+
+
+def _normalise_json_compatible_value(value: Any) -> Any:
+    if isinstance(value, Decimal):
+        if value == value.to_integral_value():
+            return int(value)
+
+        return float(value)
+
+    if isinstance(value, dict):
+        return {k: _normalise_json_compatible_value(v) for k, v in value.items()}
+
+    if isinstance(value, list):
+        return [_normalise_json_compatible_value(v) for v in value]
+
+    if isinstance(value, tuple):
+        return tuple(_normalise_json_compatible_value(v) for v in value)
+
+    return value
 
 
 # pylint: disable=abstract-method, too-many-ancestors

@@ -3,11 +3,11 @@ Session module contains implementation logic for a database session
 """
 
 import functools
-from typing import Any, Callable, TypeVar, cast
+from typing import Any, cast
 
 from sqlalchemy.orm import SessionTransaction, Session as BaseSession, sessionmaker
 
-FuncT = TypeVar("FuncT", bound=Callable[..., Any])
+from sanctumlabs_dbkit.sql.session.types import FuncT
 
 
 class Session(BaseSession):

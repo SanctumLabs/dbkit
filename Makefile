@@ -66,6 +66,10 @@ lint-pylint: ## Runs linting with pylint
 lint-ruff: ## Runs linting with ruff
 	poetry run ruff check sanctumlabs_dbkit
 
+.PHONY: lint-ty
+lint-ty: ## Runs type checking with ty
+	poetry run ty check
+
 .PHONY: lint
 lint: format-black lint-flake8 lint-mypy lint-pylint
 
