@@ -205,7 +205,7 @@ class AsyncBaseRepository(Generic[T]):
         return scalars.first()
 
 
-class AsyncWriteRepository(AsyncBaseRepository, Generic[T]):
+class AsyncWriteRepository(AsyncBaseRepository[T]):
     """
     A base class for implementing an async write Repository or DAO for performing write operations.
 
