@@ -2,7 +2,7 @@
 Contains a generic base repository or DAO for access patterns to data for a given database model
 """
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from typing import (
     Generic,
     Any,
@@ -10,8 +10,11 @@ from typing import (
     Sequence,
     Type,
     cast,
-    TypeGuard,
 )
+try:
+    from typing import TypeGuard  # type: ignore
+except Exception:
+    from typing_extensions import TypeGuard  # type: ignore
 
 from sqlalchemy import ColumnElement, Select, select
 
@@ -74,8 +77,20 @@ class AsyncRepository(Generic[T]):
 
         return selectable
 
+    def _coerce_pk(self, pk: Any) -> Any:
+        """Coerce string PKs to UUID objects when appropriate to satisfy DB column processors."""
+        if isinstance(pk, str):
+            try:
+                from uuid import UUID as _UUID
+
+                return _UUID(pk)
+            except Exception:
+                return pk
+        return pk
+
     async def find(self, pk: Any, include_deleted: bool = False) -> Optional[T]:
         """Retrieve a given model given its primary key"""
+        pk = self._coerce_pk(pk)
         pk_column = cast(ColumnElement, getattr(self.model, self.model.pk))
 
         statement = self.query(include_deleted).where(pk_column == pk).limit(1)
@@ -113,15 +128,19 @@ class AsyncRepository(Generic[T]):
         entity = cast(AbstractBaseModel, await self.find(pk))
 
         if entity:
-            entity.deleted_at = datetime.now(UTC)
+            entity.deleted_at = datetime.now(timezone.utc)
 
     async def list(
         self, limit: int = 20, offset: int = 0, include_deleted: bool = False
     ) -> Sequence[T]:
         """Returns a list of records for the given database record"""
+        # Order by created_at DESC, with a deterministic secondary ordering.
+        # Prefer `id` if the model has it, otherwise fall back to PK.
+        secondary = getattr(self.model, "id", None) or getattr(self.model, self.model.pk)
+
         statement = (
             self.query(include_deleted)
-            .order_by(self.model.created_at.desc())
+            .order_by(self.model.created_at.desc(), secondary.desc())
             .limit(limit)
             .offset(offset)
         )
@@ -164,8 +183,20 @@ class AsyncBaseRepository(Generic[T]):
 
         return selectable
 
+    def _coerce_pk(self, pk: Any) -> Any:
+        """Coerce string PKs to UUID objects when appropriate to satisfy DB column processors."""
+        if isinstance(pk, str):
+            try:
+                from uuid import UUID as _UUID
+
+                return _UUID(pk)
+            except Exception:
+                return pk
+        return pk
+
     async def find(self, pk: Any, include_deleted: bool = False) -> Optional[T]:
         """Retrieve a given model given its primary key"""
+        pk = self._coerce_pk(pk)
         pk_column = cast(ColumnElement, getattr(self.model, self.model.pk))
 
         statement = self.query(include_deleted).where(pk_column == pk).limit(1)
@@ -220,7 +251,7 @@ class AsyncWriteRepository(AsyncBaseRepository, Generic[T]):
         entity = cast(AbstractBaseModel, await self.find(pk))
 
         if entity:
-            entity.deleted_at = datetime.now(UTC)
+            entity.deleted_at = datetime.now(timezone.utc)
 
 
 class AsyncReadRepository(AsyncBaseRepository, Generic[T]):
@@ -257,13 +288,21 @@ class AsyncReadRepository(AsyncBaseRepository, Generic[T]):
 
         return scalars.all()
 
-    async def list(
-        self, limit: int = 20, offset: int = 0, include_deleted: bool = False
-    ) -> Sequence[T]:
-        """Returns a list of records for the given database record"""
+        # Order by created_at DESC, with a deterministic secondary ordering.
+        # Prefer `email` if the model has it (useful for User), otherwise fall back to PK.
+        secondary = getattr(self.model, "email", None) or getattr(self.model, self.model.pk)
+
         statement = (
             self.query(include_deleted)
-            .order_by(self.model.created_at.desc())
+            .order_by(self.model.created_at.desc(), secondary.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+        scalars = await self.session.scalars(statement)
+
+        return scalars.all()
+
+            .order_by(self.model.created_at.desc(), secondary.desc())
             .limit(limit)
             .offset(offset)
         )

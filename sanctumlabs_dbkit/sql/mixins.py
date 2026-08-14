@@ -8,7 +8,33 @@ from uuid import UUID, uuid4
 from sqlalchemy import DateTime, func, BIGINT, Identity
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 from sqlalchemy.dialects.postgresql import UUID as UUIDType
+from sqlalchemy.types import TypeDecorator
 import inflection
+
+
+class TZDateTime(TypeDecorator):
+    """TypeDecorator that ensures datetimes returned from DB are timezone-aware (UTC).
+
+    SQLite stores datetimes without timezone info; this decorator attaches UTC tzinfo when missing.
+    """
+
+    impl = DateTime
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+        try:
+            from datetime import timezone
+
+            if isinstance(value, datetime) and value.tzinfo is None:
+                return value.replace(tzinfo=timezone.utc)
+        except Exception:
+            pass
+        return value
 
 _NOT_DELETED: datetime = datetime(1970, 1, 1, 0, 0, 1, 0, timezone.utc)
 
@@ -39,11 +65,11 @@ class TimestampColumnsMixin:
 
     # pylint: disable=not-callable
     created_at: Mapped[Optional[datetime]] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), index=True
+        TZDateTime(timezone=True), server_default=func.now(), index=True
     )
     # pylint: disable=not-callable
     updated_at: Mapped[Optional[datetime]] = mapped_column(
-        DateTime(timezone=True), onupdate=func.now(), index=True
+        TZDateTime(timezone=True), onupdate=func.now(), index=True
     )
 
 
@@ -65,7 +91,7 @@ class SoftDeletedMixin:
     @declared_attr
     def deleted_at(self) -> Mapped[Optional[datetime]]:
         """Returns the date of the deleted record"""
-        return mapped_column(DateTime(timezone=True), default=self.not_deleted_value())
+        return mapped_column(TZDateTime(timezone=True), default=self.not_deleted_value())
 
 
 class AuditedMixin:

@@ -39,13 +39,13 @@ class AsyncSession(BaseAsyncSession):
         session = SessionLocal()
 
         @session.transaction
-        def create_user(payload) -> User:
+        async def create_user(payload) -> User:
             user = User(**payload)
             session.add(user)
 
             return user
 
-        create_user({"first_name": "Bob"})
+        await create_user({"first_name": "Bob"})
         """
 
         @functools.wraps(func)
@@ -71,12 +71,12 @@ def async_transaction(func: FuncT) -> FuncT:
         if not self.session or not isinstance(self.session, AsyncSession):
             # pylint: disable=broad-exception-raised
             raise Exception(
-                "The @transaction decorator requires that an instance variable `session` be set to an instance of a "
-                "`Session`."
+                "The @transaction decorator requires that an instance variable `session` be set to an instance of "
+                "AsyncSession."
             )
 
         async with self.session.begin():
-            return func(self, *args, **kwargs)
+            return await func(self, *args, **kwargs)
 
     return cast(FuncT, wrapper)
 

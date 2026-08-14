@@ -1,6 +1,6 @@
 import os
 import json
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any, Generator
 from uuid import UUID
@@ -68,7 +68,7 @@ def database_session() -> Generator[Session, Any, None]:
                     first_name="Mr",
                     last_name="Robot",
                     email="mr.robot@sanctumlabs.com",
-                    deleted_at=datetime.now(UTC),
+                    deleted_at=datetime.now(timezone.utc),
                 ),
                 Business(name="SanctumLabs"),
                 Business(name="RusticW olf", is_active=False),
@@ -79,7 +79,7 @@ def database_session() -> Generator[Session, Any, None]:
                 Card(
                     uuid=UUID("89fbad38-aedb-491a-a579-ed0a69a9e7d6"),
                     number="67890",
-                    deleted_at=datetime.now(UTC),
+                    deleted_at=datetime.now(timezone.utc),
                 ),
             ]
         )
